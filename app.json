@@ -7,9 +7,20 @@
   "window": {
     "backgroundTextStyle": "light",
     "navigationBarBackgroundColor": "#fff",
-    "navigationBarTitleText": "Weixin",
+    "navigationBarTitleText": "智能记录里程工具",
     "navigationBarTextStyle": "black"
   },
   "style": "v2",
+  "requiredBackgroundModes": [
+    "location"
+  ],
+  "permission": {
+    "scope.userLocation": {
+      "desc": "获取实时位置信息"
+    },
+    "scope.userLocationBackground": {
+      "desc": "位置信息将用于展示所在地区"
+    }
+  },
   "sitemapLocation": "sitemap.json"
 }

@@ -5,7 +5,7 @@
   接受到车辆信息
 2.在数据库对应集合名下创建一个新字段，字段内容包括
   _id         默认
-  openid      默认       每个用户唯一
+  openid      默认       每个用户唯一  
   startOdom   number     取上次结束里程和作为本次开始里程
   startTime   date       触发时间
   stopOdom    number
@@ -16,7 +16,7 @@
 4.判断数据有效性，通过经纬度判断用户是否在规定区域内，如果没有，延时2s继续判断，直到确定在区域内，如果连续5次判断不在规定区域，则结束，显示用户不在指定区域
 5.对数据进行判断是否在石家庄境内
 6.只有当行使出当前范围，开始记录当前里程 carLaunch置1
-7.当返回后，carBack置1，自动记录形式里程和结束时间，并计算最终里程，判断数据carLaunch与carBack是否都是1，都是1则存入数据库，否则丢弃数据，
+7.当返回后，carBack置1，自动记录形式里程和结束时间，并计算最终里程，判断数据carLaunch与carBack是否都是1，都是1则存入数据库，否则丢弃数据。
 */
 Page({
 
@@ -24,14 +24,21 @@ Page({
    * 页面的初始数据
    */
   data: {
-
+    carNum:'',               // 从上个页面传过来的车牌号
+    latitude: 23.099994,     //
+    longitude: 113.324520,   //
+    speed:0,                 //
+    distance:0,              //
+    src: '',                 //
+    currentTime:'',          //
+    nfc:null,                //
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-
+    this.setData({carNum:options.carNum})
   },
 
   /**

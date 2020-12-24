@@ -8,6 +8,6 @@
     </block>
   </view>
   <view class="usermotto">
-    <text class="user-motto">{{motto}}</text>
+    <button bindtap="myScanCode" class="page-body-button" type="primary">{{motto}}</button>
   </view>
 </view>

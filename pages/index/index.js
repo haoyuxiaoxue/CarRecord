@@ -4,7 +4,7 @@ const app = getApp()
 
 Page({
   data: {
-    motto: 'Hello World',
+    motto: '扫码出发',
     userInfo: {},
     hasUserInfo: false,
     canIUse: wx.canIUse('button.open-type.getUserInfo')
@@ -50,5 +50,43 @@ Page({
       userInfo: e.detail.userInfo,
       hasUserInfo: true
     })
-  }
+  },
+  /*
+  二维码扫描，同时向数据库添加车辆信息
+  */
+ myScanCode:function(){
+  var that = this;
+  wx.scanCode({
+    onlyFromCamera: true,
+    success(res){
+      // console.log(res)
+      that.addRunInform(res.result)
+    }
+  })
+},
+  /*
+  测试数据库添加数据
+  */
+ addRunInform:function(e){
+    const db = wx.cloud.database()
+    db.collection(e).add({
+    data:{      
+      startOdom:0,
+      startTime:new Date(),
+      stopTime:-1,
+      stopOdom:-1,
+      carLaunch:0,
+      carBack:0
+    },
+    success:function(res){
+      console.log('成功添加数据')
+    },
+    fail:function(res){
+      console.log('添加数据失败')
+    }
+  })
+  wx.navigateTo({
+    url: '/pages/CarRecord/CarRecord?carNum='+e,
+  })
+  },
 })

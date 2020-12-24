@@ -32,6 +32,15 @@ App({
         }
       }
     })
+    // 建立微信云连接
+    if(!wx.cloud){
+      console.error('没有创建微信云，请现创建微信云')
+    }else{
+      wx.cloud.init({
+        env:'dev-5glhwy6x6b21a16e',//根据使用环境设置env 这里使用开发环境的dev
+        traceUser:true,
+      })      
+    }  
   },
   globalData: {
     userInfo: null
