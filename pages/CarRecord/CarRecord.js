@@ -15,10 +15,9 @@ index页面js
   carBack     number
 CarRecord页面js
 3.获取用户定位数据，包括经度，纬度，速度，并将数据转换成要求格式（经纬度小数点后保留4位，速度保留两位小数）
-4.判断数据有效性，通过经纬度判断用户是否在规定区域内，如果没有，延时2s继续判断，直到确定在区域内，如果连续5次判断不在规定区域，则结束，显示用户不在指定区域
-5.对数据进行判断是否在石家庄境内
-6.只有当行使出当前范围，开始记录当前里程 carLaunch置1
-7.当返回后，carBack置1，自动记录形式里程和结束时间，并计算最终里程，判断数据carLaunch与carBack是否都是1，都是1则存入数据库，否则丢弃数据。
+4.判断数据有效性，通过经纬度判断用户是否在规定区域内，目前指定单位坐标为其实数据
+5.只有当行使出当前范围，开始记录当前里程 carLaunch置1
+6.当返回后，carBack置1，自动记录形式里程和结束时间，并计算最终里程，判断数据carLaunch与carBack是否都是1，都是1则存入数据库，否则丢弃数据。
 
 */
 const app =getApp()
@@ -55,7 +54,7 @@ Page({
 
   },
 
-/*
+  /*
   获取实时位置
   */
  getYourRealtimeLocation:function(){
@@ -95,6 +94,7 @@ Page({
     }
   })
 },
+
 /*
 实时监听位置信息
 实时监听位置
@@ -106,16 +106,38 @@ onShow() {
     this.setData({latitude:res.latitude})
     this.setData({longitude:res.longitude})
     this.setData({speed:res.speed})
-    var dis = this.data.distance + this.data.speed 
-    this.setData({distance:dis})
+    app.globalData.distance = app.globalData.distance + this.data.speed 
+    this.setData({distance:app.globalData.distance})
     //如果超出区域，carLaunch设置为1
     if(this.data.latitude>38.0880&&this.data.latitude<38.0905&&this.data.longitude>114.3250&&this.data.longitude<114.3271){      
     }else{
       this.setData({carLaunch:1})
+      app.globalData.db.collection(app.globalData.carNum).orderBy('startTime','desc').get({
+        success:function(res){
+          app.globalData.db.collection(app.globalData.carNum).doc(res.data[0]._id).update({
+            data:{
+              carLaunch:1
+            }
+          })
+        }
+      })
+      
     }
     // 当返回到指定区域，carBack设置为1
     if(this.data.latitude>38.0888&&this.data.latitude<38.0897&&this.data.longitude>114.3258&&this.data.longitude<114.3263&&this.data.carLaunch==1){
       this.setData({carBack:1})
+      app.globalData.db.collection(app.globalData.carNum).orderBy('startTime','desc').get({
+        success:function(res){
+          app.globalData.db.collection(app.globalData.carNum).doc(res.data[0]._id).update({
+            data:{
+              carLaunch:1,
+              carBack:1,
+              stopTime:new Date(),
+              stopOdom: app.globalData.startOdom + (app.globalData.distance/1000),
+            }
+          })
+        }
+      })
     }    
   }
   wx.onLocationChange(_locationChangeFn);
@@ -125,6 +147,7 @@ onShow() {
   // }
   
 },
+
 
   /**
    * 生命周期函数--监听页面隐藏

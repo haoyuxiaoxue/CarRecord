@@ -9,5 +9,6 @@
   </view>
   <view class="usermotto">
     <button bindtap="myScanCode" class="page-body-button" type="primary">{{motto}}</button>
+    <!--button bindtap="test" class="page-body-button" type="primary">测试</button-->
   </view>
 </view>

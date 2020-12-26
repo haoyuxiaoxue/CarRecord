@@ -54,6 +54,8 @@ Page({
     })
   },
   onShow:function(){    
+    // 建立数据库链接
+    app.globalData.db = wx.cloud.database() 
   },
   /*
   二维码扫描，同时向数据库添加车辆信息
@@ -79,17 +81,26 @@ Page({
     }
   })
 },
+/*
+*/
+test:function(){
+  app.globalData.db.collection(app.globalData.carNum).orderBy('startTime','desc').get({
+    success:function(res){
+      console.log(res.data[0])
+    }
+  })
+},
   /*
   获取最大里程
   */
- getMaxOdom:function(e){
-  app.globalData.db = wx.cloud.database() 
+ getMaxOdom:function(e){  
   var that = this
   app.globalData.db.collection(this.data.carNum).orderBy('stopOdom','desc').get({
     success:function(res){      
       console.log('get最大Odom是：',res.data[0].stopOdom)  
       console.log('开始执行setData')    
       that.setData({MaxOdom:res.data[0].stopOdom})
+      app.globalData.startOdom = res.data[0].stopOdom
       console.log('data中的MaxOdom是：',that.data.MaxOdom)      
       console.log('开始执行addRunInfo')
       that.addRunInform()   

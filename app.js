@@ -48,5 +48,7 @@ App({
     carNum:null,
     db:null,
     alreadyScan:0,
+    distance:0,
+    startOdom:0,
   }
 })
