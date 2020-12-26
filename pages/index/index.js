@@ -7,7 +7,9 @@ Page({
     motto: '扫码出发',
     userInfo: {},
     hasUserInfo: false,
-    canIUse: wx.canIUse('button.open-type.getUserInfo')
+    canIUse: wx.canIUse('button.open-type.getUserInfo'),    
+    carNum:'',
+    MaxOdom:'',
   },
   //事件处理函数
   bindViewTap: function() {
@@ -51,42 +53,76 @@ Page({
       hasUserInfo: true
     })
   },
+  onShow:function(){    
+  },
   /*
   二维码扫描，同时向数据库添加车辆信息
   */
  myScanCode:function(){
+   console.log('alreadyScan:',app.globalData.alreadyScan)
+  if(app.globalData.alreadyScan == 1){
+    console.log(app.globalData.carNum)
+    wx.navigateTo({
+      url: '/pages/CarRecord/CarRecord?carNum='+app.globalData.carNum,
+    })
+    return
+  }
+  console.log('alreadyScan:',app.globalData.alreadyScan)
   var that = this;
   wx.scanCode({
     onlyFromCamera: true,
     success(res){
       // console.log(res)
-      that.addRunInform(res.result)
+      that.setData({carNum:res.result})
+      app.globalData.carNum = res.result
+      that.getMaxOdom(res.result)
     }
   })
 },
   /*
+  获取最大里程
+  */
+ getMaxOdom:function(e){
+  app.globalData.db = wx.cloud.database() 
+  var that = this
+  app.globalData.db.collection(this.data.carNum).orderBy('stopOdom','desc').get({
+    success:function(res){      
+      console.log('get最大Odom是：',res.data[0].stopOdom)  
+      console.log('开始执行setData')    
+      that.setData({MaxOdom:res.data[0].stopOdom})
+      console.log('data中的MaxOdom是：',that.data.MaxOdom)      
+      console.log('开始执行addRunInfo')
+      that.addRunInform()   
+      console.log('结束addRunInfo')   
+    }
+  })  
+},
+  /*
   测试数据库添加数据
   */
- addRunInform:function(e){
-    const db = wx.cloud.database()
-    db.collection(e).add({
-    data:{      
-      startOdom:0,
-      startTime:new Date(),
-      stopTime:-1,
-      stopOdom:-1,
-      carLaunch:0,
-      carBack:0
-    },
-    success:function(res){
-      console.log('成功添加数据')
-    },
-    fail:function(res){
-      console.log('添加数据失败')
-    }
-  })
-  wx.navigateTo({
-    url: '/pages/CarRecord/CarRecord?carNum='+e,
-  })
+ addRunInform:function(){    
+  console.log('进入addRunInfo') 
+  console.log('add最大Odom是：',this.data.MaxOdom)
+  var that = this
+  app.globalData.db.collection(this.data.carNum).add({
+  data:{      
+    startOdom:this.data.MaxOdom,
+    startTime:new Date(),
+    stopTime:0,
+    stopOdom:0,
+    carLaunch:0,
+    carBack:0
+  },  
+  success:function(res){
+    console.log('成功添加数据,跳转CarRecord页面')    
+    app.globalData.alreadyScan = 1
+    wx.navigateTo({
+      url: '/pages/CarRecord/CarRecord?carNum='+that.data.carNum,
+    })  
   },
+  fail:function(res){
+    console.log('添加数据失败')      
+  }
+})  
+},
 })

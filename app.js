@@ -39,10 +39,14 @@ App({
       wx.cloud.init({
         env:'dev-5glhwy6x6b21a16e',//根据使用环境设置env 这里使用开发环境的dev
         traceUser:true,
-      })      
+      })
+      console.log('初始化cloud')      
     }  
   },
   globalData: {
-    userInfo: null
+    userInfo: null,
+    carNum:null,
+    db:null,
+    alreadyScan:0,
   }
 })

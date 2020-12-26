@@ -1,2 +1,20 @@
 <!--pages/CarRecord/CarRecord.wxml-->
-<text>pages/CarRecord/CarRecord.wxml</text>
+<view class="page-section page-section-gap">
+    <map
+      id="myMap"
+      style="width: 100%; height: 400px;"
+      latitude="{{latitude}}"
+      longitude="{{longitude}}"     
+      show-location
+    ></map>
+  </view>
+  <view class="loc-area">
+    <view>
+      <view>维度：{{latitude}}</view>
+      <view>经度：{{longitude}}</view>
+      <view>速度：{{speed}}</view>
+      <view>移动距离：{{distance}}</view>
+      <view>carLaunch：{{carLaunch}}</view>
+      <view>carBack：{{carBack}}</view>
+    </view>
+  </view>  
