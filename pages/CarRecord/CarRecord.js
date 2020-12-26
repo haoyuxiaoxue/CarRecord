@@ -19,6 +19,7 @@ CarRecord页面js
 5.对数据进行判断是否在石家庄境内
 6.只有当行使出当前范围，开始记录当前里程 carLaunch置1
 7.当返回后，carBack置1，自动记录形式里程和结束时间，并计算最终里程，判断数据carLaunch与carBack是否都是1，都是1则存入数据库，否则丢弃数据。
+
 */
 const app =getApp()
 Page({
@@ -28,8 +29,8 @@ Page({
    */
   data: {
     carNum:'',               // 从上个页面传过来的车牌号
-    latitude: 38.0892,     //
-    longitude: 114.3260,   //
+    latitude: 38.0892,       //
+    longitude: 114.3260,     //
     speed:0,                 //
     distance:0,              //
     src: '',                 //
@@ -107,11 +108,12 @@ onShow() {
     this.setData({speed:res.speed})
     var dis = this.data.distance + this.data.speed 
     this.setData({distance:dis})
-
-    if(this.data.latitude>38.0885&&this.data.latitude<38.0900&&this.data.longitude>114.3255&&this.data.longitude<114.3266){      
+    //如果超出区域，carLaunch设置为1
+    if(this.data.latitude>38.0880&&this.data.latitude<38.0905&&this.data.longitude>114.3250&&this.data.longitude<114.3271){      
     }else{
       this.setData({carLaunch:1})
     }
+    // 当返回到指定区域，carBack设置为1
     if(this.data.latitude>38.0888&&this.data.latitude<38.0897&&this.data.longitude>114.3258&&this.data.longitude<114.3263&&this.data.carLaunch==1){
       this.setData({carBack:1})
     }    
