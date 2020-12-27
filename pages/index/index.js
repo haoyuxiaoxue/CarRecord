@@ -84,11 +84,7 @@ Page({
 /*
 */
 test:function(){
-  app.globalData.db.collection(app.globalData.carNum).orderBy('startTime','desc').get({
-    success:function(res){
-      console.log(res.data[0])
-    }
-  })
+  return
 },
   /*
   获取最大里程

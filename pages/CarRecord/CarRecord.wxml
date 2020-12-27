@@ -18,3 +18,4 @@
       <view>carBack：{{carBack}}</view>
     </view>
   </view>  
+  <button wx:if="{{!hasLocationUpdateAuth}}" bindtap="setLocationAuth" open-type="primary">打开授权页面</button>

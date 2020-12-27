@@ -37,8 +37,8 @@ Page({
     nfc:null,                //
     carLaunch:0,
     carBack:0,
+    hasLocationUpdateAuth: false,
   },
-
 
   /**
    * 生命周期函数--监听页面加载
@@ -54,10 +54,15 @@ Page({
 
   },
 
+  setLocationAuth:function(){
+    wx.openSetting({})
+  },
+
   /*
   获取实时位置
   */
  getYourRealtimeLocation:function(){
+  var that = this
   wx.getSetting({
     success(res) {
       console.log(res)
@@ -65,6 +70,7 @@ Page({
         wx.startLocationUpdateBackground({
           success: (res) => {
             console.log('startLocationUpdate-res', res)
+            that.setData({hasLocationUpdateAuth:true})
           },
           fail: (err) => {
             console.log('startLocationUpdate-err', err)
@@ -72,27 +78,31 @@ Page({
         })
       } else {
         if (res.authSetting['scope.userLocation']==false) {
-          console.log('打开设置页面去授权')
-          wx.openSetting({
-            withSubscriptions: true,
-          })
+                    
         } else {
           wx.startLocationUpdateBackground({
             success: (res) => {
               console.log('startLocationUpdate-res', res)
+              console.log('startLocationUpdate授权成功')
+              that.setData({hasLocationUpdateAuth:true})
+              console.log(that.data.hasLocationUpdateAuth)
             },
             fail: (err) => {
               console.log('startLocationUpdate-err', err)
-              console.log('startLocationUpdata失败')
-              wx.openSetting({
-                withSubscriptions: true,
-              })
+              console.log('startLocationUpdate失败')
+              console.log('打开授权页面')
+              that.setData({hasLocationUpdateAuth:false})
+              console.log(that.data.hasLocationUpdateAuth)
             }
           })
         }
       }
     }
   })
+},
+
+onLoad:function(){
+  
 },
 
 /*
@@ -129,8 +139,7 @@ onShow() {
       app.globalData.db.collection(app.globalData.carNum).orderBy('startTime','desc').get({
         success:function(res){
           app.globalData.db.collection(app.globalData.carNum).doc(res.data[0]._id).update({
-            data:{
-              carLaunch:1,
+            data:{              
               carBack:1,
               stopTime:new Date(),
               stopOdom: app.globalData.startOdom + (app.globalData.distance/1000),
@@ -140,12 +149,10 @@ onShow() {
       })
     }    
   }
-  wx.onLocationChange(_locationChangeFn);
-  
+  wx.onLocationChange(_locationChangeFn);  
   // const _HCEMessageFn = res =>{
   //   console.log(res.data)
-  // }
-  
+  // }  
 },
 
 
